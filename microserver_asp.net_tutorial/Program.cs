@@ -1,3 +1,6 @@
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+
 namespace microserver_asp.net_tutorial
 {
     
@@ -6,6 +9,10 @@ namespace microserver_asp.net_tutorial
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddSingleton<Models.AgentPool>();//Регистрируем сервес в рамках шаблона singleton 
+            //Подключенная функция обеспечивает потокобезопасность 
+            //Объект будет создан тольки один раз
 
 
 
@@ -30,10 +37,23 @@ namespace microserver_asp.net_tutorial
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
 
+            //Поговорим об этом явление на следующей недели
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MetricsAgent", Version = "v1" });
+
+                //Поддержка TimeSpan
+                c.MapType<TimeSpan>(() => new OpenApiSchema
+                {
+                    Type = "string",
+                    Example = new OpenApiString("00:00:00")
+                });
+            });
+
+
+            var app = builder.Build();            
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -47,7 +67,7 @@ namespace microserver_asp.net_tutorial
 
 
             app.MapControllers();
-
+            
             app.Run();
         }
     }
