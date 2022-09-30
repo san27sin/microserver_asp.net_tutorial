@@ -43,6 +43,7 @@ namespace MetricsAgent.Controllers
         [HttpGet("from/{fromTime}/to/{toTime}")]
         public ActionResult<IList<CpuMetric>> GetMetricsCpu([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
+            _logger.LogInformation("Get all cpu metrics.");
             return Ok(_cpuMetricRepository.GetByTimePeriod(fromTime, toTime));
         }
 

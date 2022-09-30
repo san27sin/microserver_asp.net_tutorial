@@ -39,7 +39,12 @@ builder.Services.AddHttpLogging(logging =>
 //можем добавлять нетолько сами модули как сервесы, но в рамках сервеса так же может выступать наша абстракция
 //делаем зависимость нашего контроллера от абстракции нашего контроллера
 
-builder.Services.AddScoped<ICpuMetricsRepository,CpuMetricsRepository>();
+builder.Services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
+builder.Services.AddScoped<IDotNetMetricsRepository, DotNetMetricsRepository>();
+builder.Services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
+builder.Services.AddScoped<INetworkMetricRepository, NetworkMetricsRepository>();
+builder.Services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
+
 //singletone - живет вечно
 //scope живет по времи обработки запроса
 
