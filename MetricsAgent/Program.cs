@@ -1,16 +1,57 @@
+using MetricsAgent;
+using MetricsAgent.Controllers;
+using MetricsAgent.Models;
+using MetricsAgent.Services;
+using MetricsAgent.Services.impl;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using NLog.Web;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region Configure logging
+
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+}).UseNLog(new NLogAspNetCoreOptions() { RemoveLoggerFactoryFilter = true });
+
+builder.Services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = HttpLoggingFields.All | HttpLoggingFields.RequestQuery;
+    logging.RequestBodyLogLimit = 4096;
+    logging.ResponseBodyLogLimit = 4096;
+    logging.RequestHeaders.Add("Authorization");
+    logging.RequestHeaders.Add("X-Real-IP");
+    logging.RequestHeaders.Add("X-Forwarded-For");
+});
+
+#endregion
+
+
+
 // Add services to the container.
+
+//можем добавлять нетолько сами модули как сервесы, но в рамках сервеса так же может выступать наша абстракция
+//делаем зависимость нашего контроллера от абстракции нашего контроллера
+
+builder.Services.AddScoped<ICpuMetricsRepository,CpuMetricsRepository>();
+//singletone - живет вечно
+//scope живет по времи обработки запроса
+
+Sql.ConfigerSqlLiteConnection();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+
 //Поговорим об этом явление на следующей недели
-builder.Services.AddSwaggerGen( c =>
+builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MetricsAgent", Version = "v1" });
 
@@ -35,6 +76,15 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseHttpLogging();//добавляем для использования логирования
+
 app.MapControllers();
 
 app.Run();
+
+
+
+
+
+
+

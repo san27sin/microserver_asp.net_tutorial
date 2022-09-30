@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MetricsAgent.Models;
+using MetricsAgent.Models.Request;
+using MetricsAgent.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MetricsAgent.Controllers
 {
@@ -6,6 +9,31 @@ namespace MetricsAgent.Controllers
     [ApiController]
     public class CpuMetricsController : Controller
     {
+        private readonly ILogger<CpuMetricsController> _logger;
+
+        //на уровне контроллера добавляем зависимость
+        private readonly ICpuMetricsRepository _cpuMetricRepository;
+
+        public CpuMetricsController(ICpuMetricsRepository cpuMetricRepository, ILogger<CpuMetricsController> logger)
+        {
+            _cpuMetricRepository = cpuMetricRepository;
+            _logger = logger;
+        }
+
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] CpuMetricCreateRequest request)
+        {
+            _logger.LogInformation("Create cpu metrics.");
+            _cpuMetricRepository.Create(new Models.CpuMetric
+            {
+                Value = request.Value,
+                Time = (int)request.Time.TotalSeconds
+            });
+            return Ok();
+        }
+
+        
+
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
         public IActionResult GetMetricsCpuPersentiles([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] double percentile)
         {
@@ -13,9 +41,9 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsCpu([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public ActionResult<IList<CpuMetric>> GetMetricsCpu([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
-            return Ok();
+            return Ok(_cpuMetricRepository.GetByTimePeriod(fromTime, toTime));
         }
 
 

@@ -1,14 +1,19 @@
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using NLog;
 
 namespace microserver_asp.net_tutorial
 {
     
     public class Program
     {
+        //Репозиторий - это шаблон проектирования который помогает абстрагироваться от подключения к различным источникам данных, это промежуточное звено
+        //между источником данных и реализации нашего сервеса, репозиторий это своего рода абстракция
+        //Оба типа модуля должны зависеть от абстракции
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+                      
 
             builder.Services.AddSingleton<Models.AgentPool>();//Регистрируем сервес в рамках шаблона singleton 
             //Подключенная функция обеспечивает потокобезопасность 
@@ -42,7 +47,7 @@ namespace microserver_asp.net_tutorial
             //Поговорим об этом явление на следующей недели
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MetricsAgent", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MetricsManager", Version = "v1" });
 
                 //Поддержка TimeSpan
                 c.MapType<TimeSpan>(() => new OpenApiSchema
