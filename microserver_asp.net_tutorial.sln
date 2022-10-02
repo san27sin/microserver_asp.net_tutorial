@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "microserver_asp.net_tutorial", "microserver_asp.net_tutorial\microserver_asp.net_tutorial.csproj", "{2B1E3E31-63E9-4450-99FD-C53114E7F313}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "microserver_asp.net_tutorial", "microserver_asp.net_tutorial\microserver_asp.net_tutorial.csproj", "{2B1E3E31-63E9-4450-99FD-C53114E7F313}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsManagerTests", "MetricsManagerTests\MetricsManagerTests.csproj", "{CF52EACB-84A6-4898-8033-F46C2B61E9D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsManagerTests", "MetricsManagerTests\MetricsManagerTests.csproj", "{CF52EACB-84A6-4898-8033-F46C2B61E9D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsAgent", "MetricsAgent\MetricsAgent.csproj", "{0C51CC02-901A-436F-A273-690764272CF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsAgent", "MetricsAgent\MetricsAgent.csproj", "{0C51CC02-901A-436F-A273-690764272CF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsAgentTests", "MetricsAgentTests\MetricsAgentTests.csproj", "{CBBEA30D-5167-412B-A705-1A762B0EC1F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsAgentTests", "MetricsAgentTests\MetricsAgentTests.csproj", "{CBBEA30D-5167-412B-A705-1A762B0EC1F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{D6297D95-D74E-4083-B6C4-276C98F4E478}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{CBBEA30D-5167-412B-A705-1A762B0EC1F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBBEA30D-5167-412B-A705-1A762B0EC1F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBBEA30D-5167-412B-A705-1A762B0EC1F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6297D95-D74E-4083-B6C4-276C98F4E478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6297D95-D74E-4083-B6C4-276C98F4E478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6297D95-D74E-4083-B6C4-276C98F4E478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6297D95-D74E-4083-B6C4-276C98F4E478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

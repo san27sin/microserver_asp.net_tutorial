@@ -1,6 +1,7 @@
 ﻿using MetricsAgent.Models;
+using Core;
 
-namespace MetricsAgent.Services
+namespace MetricsAgent.DAL.Interfaces
 {
     public interface IDotNetMetricsRepository : IRepository<DotNetMetrics>
     {

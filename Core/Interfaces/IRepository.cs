@@ -1,4 +1,6 @@
-﻿namespace MetricsAgent.Services
+﻿using System.Collections.Generic;
+
+namespace Core
 {
     //создаем абстракцию (интерфейс)
     public interface IRepository<T>where T : class

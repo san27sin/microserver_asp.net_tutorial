@@ -1,7 +1,8 @@
 ﻿using MetricsAgent.Services.impl;
 using MetricsAgent.Models;
+using Core;
 
-namespace MetricsAgent.Services
+namespace MetricsAgent.DAL.Interfaces
 {
     //наследуемся от интерфейса базового
     public interface ICpuMetricsRepository : IRepository<CpuMetric>

@@ -1,5 +1,9 @@
-﻿using MetricsAgent.Models.Request;
-using MetricsAgent.Services;
+﻿using AutoMapper;
+using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.DAL.Models.Dto;
+using MetricsAgent.Models;
+using MetricsAgent.Models.Request;
+using MetricsAgent.Services.impl;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MetricsAgent.Controllers
@@ -10,22 +14,20 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<RamMetricsController> _logger;
         private readonly IRamMetricsRepository _iRamMetricsRepository;
+        private readonly IMapper _mapper;
 
-        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository iRamMetricsRepository)
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository iRamMetricsRepository, IMapper mapper)
         {
             _logger = logger;
             _iRamMetricsRepository = iRamMetricsRepository;
+            _mapper = mapper;   
         }
 
         [HttpPost("create")]
         public IActionResult Create([FromBody] RamMetricsCreateRequest request)
         {
             _logger.LogInformation("Create rammetrics");
-            _iRamMetricsRepository.Create(new Models.RamMetrics
-            {
-                Value = request.Value,
-                Time = (int)request.Time.TotalSeconds
-            });
+            _iRamMetricsRepository.Create(_mapper.Map<RamMetrics>(request));
             return Ok();
         }
 
@@ -34,7 +36,7 @@ namespace MetricsAgent.Controllers
         public IActionResult GetMetricsRam([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation("Get all rammetrics.");
-            return Ok(_iRamMetricsRepository.GetByTimePeriod(fromTime, toTime));
+            return Ok(_mapper.Map<List<RamMetricsDto>>(_iRamMetricsRepository.GetByTimePeriod(fromTime, toTime)));
         }
     }
 }

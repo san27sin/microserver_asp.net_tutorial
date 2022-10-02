@@ -1,6 +1,8 @@
-﻿using MetricsAgent.Models;
+﻿using AutoMapper;
+using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.Models;
+using MetricsAgent.Models.Dto;
 using MetricsAgent.Models.Request;
-using MetricsAgent.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MetricsAgent.Controllers
@@ -12,23 +14,21 @@ namespace MetricsAgent.Controllers
         private readonly ILogger<CpuMetricsController> _logger;
 
         //на уровне контроллера добавляем зависимость
-        private readonly ICpuMetricsRepository _cpuMetricRepository;
+        private readonly ICpuMetricsRepository _cpuMetricsRepository;
+        private readonly IMapper _mapper;
 
-        public CpuMetricsController(ICpuMetricsRepository cpuMetricRepository, ILogger<CpuMetricsController> logger)
+        public CpuMetricsController(ICpuMetricsRepository cpuMetricRepository, ILogger<CpuMetricsController> logger, IMapper mapper)
         {
-            _cpuMetricRepository = cpuMetricRepository;
+            _cpuMetricsRepository = cpuMetricRepository;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromBody] CpuMetricCreateRequest request)
+        public IActionResult Create([FromBody] CpuMetricsCreateRequest request)
         {
             _logger.LogInformation("Create cpu metrics.");
-            _cpuMetricRepository.Create(new Models.CpuMetric
-            {
-                Value = request.Value,
-                Time = (int)request.Time.TotalSeconds
-            });
+            _cpuMetricsRepository.Create(_mapper.Map<CpuMetric>(request));             
             return Ok();
         }
 
@@ -41,10 +41,17 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public ActionResult<IList<CpuMetric>> GetMetricsCpu([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public ActionResult<IList<CpuMetricsDto>> GetMetricsCpu([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        {
+            _logger.LogInformation("Get all cpu metrics fromTime to toTime.");
+            return Ok(_mapper.Map<List<CpuMetricsDto>>(_cpuMetricsRepository.GetByTimePeriod(fromTime, toTime)));
+        }        
+
+        [HttpGet("all")]
+        public ActionResult<IList<CpuMetricsDto>> GetAllMetricsCpu()
         {
             _logger.LogInformation("Get all cpu metrics.");
-            return Ok(_cpuMetricRepository.GetByTimePeriod(fromTime, toTime));
+            return Ok(_mapper.Map<List<CpuMetricsDto>>(_cpuMetricsRepository.GetAll()));
         }
 
 

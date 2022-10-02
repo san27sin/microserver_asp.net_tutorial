@@ -1,5 +1,8 @@
-﻿using MetricsAgent.Models.Request;
-using MetricsAgent.Services;
+﻿using AutoMapper;
+using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.DAL.Models.Dto;
+using MetricsAgent.Models;
+using MetricsAgent.Models.Request;
 using MetricsAgent.Services.impl;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,22 +14,20 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<HddMetricsController> _logger;
         private readonly IHddMetricsRepository _hddMetricsRepository;
+        private readonly IMapper _mapper;
 
-        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository hddMetricsRepository)
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository hddMetricsRepository, IMapper mapper)
         {
             _logger = logger;
             _hddMetricsRepository = hddMetricsRepository;
+            _mapper = mapper;
         }
 
         [HttpPost("create")]
         public IActionResult Create([FromBody] HddMetricsCreateRequest request)
         {
             _logger.LogInformation("Create hddmetrics");
-            _hddMetricsRepository.Create(new Models.HddMetrics
-            {
-                Value = request.Value,
-                Time = (int)request.Time.TotalSeconds
-            });
+            _hddMetricsRepository.Create(_mapper.Map<HddMetrics>(request));
             return Ok();
         }
 
@@ -34,7 +35,7 @@ namespace MetricsAgent.Controllers
         public IActionResult GetMetricsHdd([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation("Get all hddmetrics.");
-            return Ok(_hddMetricsRepository.GetByTimePeriod(fromTime, toTime));
+            return Ok(_mapper.Map<List<HddMetricsDto>>(_hddMetricsRepository.GetByTimePeriod(fromTime, toTime)));
         }
     }
 }

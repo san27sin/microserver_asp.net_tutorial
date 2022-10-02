@@ -1,8 +1,9 @@
 ﻿using MetricsAgent.Models;
+using Core;
 
-namespace MetricsAgent.Services
+namespace MetricsAgent.DAL.Interfaces
 {
-    public interface INetworkMetricRepository:IRepository<NetworkMetric>
+    public interface INetworkMetricsRepository : IRepository<NetworkMetric>
     {
         IList<NetworkMetric> GetByTimePeriod(TimeSpan timeFrom, TimeSpan timeTo);
     }

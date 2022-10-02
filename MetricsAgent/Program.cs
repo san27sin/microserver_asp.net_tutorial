@@ -1,7 +1,9 @@
+using AutoMapper;
 using MetricsAgent;
 using MetricsAgent.Controllers;
+using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.Models;
-using MetricsAgent.Services;
+using MetricsAgent.Models.Mapper;
 using MetricsAgent.Services.impl;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.OpenApi.Any;
@@ -11,6 +13,28 @@ using NLog.Web;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Configure Options
+
+
+//Прописываем значение переменной из config file для нашей переменной
+builder.Services.Configure<DatabaseOptions>(options =>
+{
+    builder.Configuration.GetSection("Settings:DatabaseOptions").Bind(options);
+});
+
+
+#endregion
+
+#region Configure Mapping
+
+var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
+var mapper = mapperConfiguration.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
+#endregion
+
+
 
 #region Configure logging
 
@@ -35,19 +59,19 @@ builder.Services.AddHttpLogging(logging =>
 
 
 // Add services to the container.
-
+#region Configure Scoped
 //можем добавлять нетолько сами модули как сервесы, но в рамках сервеса так же может выступать наша абстракция
 //делаем зависимость нашего контроллера от абстракции нашего контроллера
 
 builder.Services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
 builder.Services.AddScoped<IDotNetMetricsRepository, DotNetMetricsRepository>();
 builder.Services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
-builder.Services.AddScoped<INetworkMetricRepository, NetworkMetricsRepository>();
+builder.Services.AddScoped<INetworkMetricsRepository, NetworkMetricsRepository>();
 builder.Services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
 
 //singletone - живет вечно
 //scope живет по времи обработки запроса
-
+#endregion
 Sql.ConfigerSqlLiteConnection();
 
 builder.Services.AddControllers();
