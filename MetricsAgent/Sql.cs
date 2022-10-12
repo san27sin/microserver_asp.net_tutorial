@@ -2,6 +2,7 @@
 
 namespace MetricsAgent
 {
+    //Теперь базой данных будем пользоваться через мигратор
     public static class Sql
     {
         /// <summary>
@@ -9,7 +10,7 @@ namespace MetricsAgent
         /// </summary>
         public static void ConfigerSqlLiteConnection()
         {
-            const string connectionString = "Data Source = metrics.db; Version = 3; Pooling = true; Max Pool Size = 100;";
+            const string connectionString = "Data Source = metrics.db; Version = 3; Pooling = true; Max Pool Size = 100;";//надо поменять
             var connection = new SQLiteConnection(connectionString);//передаем объект который установил соединение с базой данных
             connection.Open();
             PrepareSchema(connection);

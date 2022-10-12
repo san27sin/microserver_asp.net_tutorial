@@ -1,7 +1,9 @@
 using AutoMapper;
+using FluentMigrator.Runner;
 using MetricsAgent;
 using MetricsAgent.Controllers;
 using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.Migrations;
 using MetricsAgent.Models;
 using MetricsAgent.Models.Mapper;
 using MetricsAgent.Services.impl;
@@ -16,6 +18,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Configure Options
 
+var serviceProvider = builder.Services.AddFluentMigratorCore()
+    .ConfigureRunner(rb => rb
+    //добавл€ем поддержку SQLite
+    .AddSQLite()
+    .WithGlobalConnectionString(builder.Configuration.GetSection("Settings:DatabaseOptions:ConnectionString").Value)
+    .ScanIn(typeof(Program).Assembly).For.Migrations())
+    .AddLogging(lb => lb
+    .AddFluentMigratorConsole());
+
+//typeof(Program).Assembly - используем рефлексию, показываем как тип и сборку надо искать
 
 //ѕрописываем значение переменной из config file дл€ нашей переменной
 builder.Services.Configure<DatabaseOptions>(options =>
@@ -72,11 +84,12 @@ builder.Services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
 //singletone - живет вечно
 //scope живет по времи обработки запроса
 #endregion
-Sql.ConfigerSqlLiteConnection();
+//Sql.ConfigerSqlLiteConnection(); “еперь его замен€ет мигратор 
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 
 
 //ѕоговорим об этом €вление на следующей недели
@@ -94,6 +107,9 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+
+var migration = new FirstMigration();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -109,7 +125,13 @@ app.UseHttpLogging();//добавл€ем дл€ использовани€ логировани€
 
 app.MapControllers();
 
+migration.Up();
+
 app.Run();
+
+//когда указываем миграцию down, то должны выбрать в скобочках именно кака€ верси€ миграции
+
+
 
 
 
