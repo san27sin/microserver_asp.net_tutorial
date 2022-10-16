@@ -23,14 +23,7 @@ namespace MetricsAgent.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] NetworkMetricsCreateRequest request)
-        {
-            _logger.LogInformation("Create networkmetrics");
-            _networkMetricRepository.Create(_mapper.Map<NetworkMetric>(request));          
-            return Ok();
-        }
-
+        
         [HttpGet("from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsNetwork([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {

@@ -24,13 +24,6 @@ namespace MetricsAgent.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] DotNetMetricsCreateRequest request)
-        {
-            _logger.LogInformation("Create dotnetmetrics");
-            _dotNetMetricsRepository.Create(_mapper.Map<DotNetMetrics>(request));
-            return Ok();
-        }
 
 
         [HttpGet("errors-count/from/{fromTime}/to/{toTime}")]

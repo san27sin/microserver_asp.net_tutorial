@@ -3,6 +3,7 @@ using FluentMigrator.Runner;
 using MetricsAgent;
 using MetricsAgent.Controllers;
 using MetricsAgent.DAL.Interfaces;
+using MetricsAgent.Jobs;
 using MetricsAgent.Migrations;
 using MetricsAgent.Models;
 using MetricsAgent.Models.Mapper;
@@ -11,8 +12,9 @@ using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using NLog.Web;
-
-
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,11 +77,11 @@ builder.Services.AddHttpLogging(logging =>
 //можем добавлять нетолько сами модули как сервесы, но в рамках сервеса так же может выступать наша абстракция
 //делаем зависимость нашего контроллера от абстракции нашего контроллера
 
-builder.Services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
-builder.Services.AddScoped<IDotNetMetricsRepository, DotNetMetricsRepository>();
-builder.Services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
-builder.Services.AddScoped<INetworkMetricsRepository, NetworkMetricsRepository>();
-builder.Services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
+builder.Services.AddSingleton<ICpuMetricsRepository, CpuMetricsRepository>();
+builder.Services.AddSingleton<IDotNetMetricsRepository, DotNetMetricsRepository>();
+builder.Services.AddSingleton<IHddMetricsRepository, HddMetricsRepository>();
+builder.Services.AddSingleton<INetworkMetricsRepository, NetworkMetricsRepository>();
+builder.Services.AddSingleton<IRamMetricsRepository, RamMetricsRepository>();
 
 //singletone - живет вечно
 //scope живет по времи обработки запроса
@@ -105,10 +107,37 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+
+
+
+
+//на каждый job регестрировать сервес
+builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
+
+builder.Services.AddSingleton<CpuMetricJob>();
+builder.Services.AddSingleton(new JobSchedule(
+    typeof(CpuMetricJob),
+    "0/5 * * ? * * *"));
+
+builder.Services.AddSingleton<RamMetricsJob>();
+builder.Services.AddSingleton(new JobSchedule(
+    typeof(RamMetricsJob),
+    "0/5 * * ? * * *"));
+
+
+builder.Services.AddHostedService<QuartzHostedService>();//этот сервес объединяет джоб
+
 var app = builder.Build();
 
+var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 
-var migration = new FirstMigration();
+using (IServiceScope serviceScope = serviceScopeFactory.CreateScope())
+{
+    var migrationRunner = serviceScope.ServiceProvider.GetService<IMigrationRunner>();
+    migrationRunner.MigrateUp(1);//когда указываем миграцию down, то должны выбрать в скобочках именно какая версия миграции    
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -125,14 +154,7 @@ app.UseHttpLogging();//добавляем для использования логирования
 
 app.MapControllers();
 
-migration.Up();
-
 app.Run();
-
-//когда указываем миграцию down, то должны выбрать в скобочках именно какая версия миграции
-
-
-
 
 
 

@@ -11,7 +11,11 @@ namespace MetricsAgent.Migrations
         public override void Down()
         {
             Delete.Table("cpumetrics");
-            
+            Delete.Table("dotnetmetrics");
+            Delete.Table("hddmetrics");
+            Delete.Table("networkmetrics");
+            Delete.Table("rammetrics");
+
         }
 
 
@@ -22,6 +26,18 @@ namespace MetricsAgent.Migrations
             //меняем миграцию и выполняется команда
             //задается таблица, колонка, тип данных, идентификационный ключ, идентификатор
             Create.Table("cpumetrics").WithColumn("Id").AsInt64().PrimaryKey().Identity()
+                .WithColumn("Value").AsInt32().WithColumn("Time").AsInt64();
+
+            Create.Table("dotnetmetrics").WithColumn("Id").AsInt64().PrimaryKey().Identity()
+                .WithColumn("Value").AsInt32().WithColumn("Time").AsInt64();
+
+            Create.Table("hddmetrics").WithColumn("Id").AsInt64().PrimaryKey().Identity()
+                .WithColumn("Value").AsInt32().WithColumn("Time").AsInt64();
+
+            Create.Table("networkmetrics").WithColumn("Id").AsInt64().PrimaryKey().Identity()
+                .WithColumn("Value").AsInt32().WithColumn("Time").AsInt64();
+
+            Create.Table("rammetrics").WithColumn("Id").AsInt64().PrimaryKey().Identity()
                 .WithColumn("Value").AsInt32().WithColumn("Time").AsInt64();
         }
     }

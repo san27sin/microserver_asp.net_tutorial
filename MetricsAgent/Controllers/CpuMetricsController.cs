@@ -24,21 +24,6 @@ namespace MetricsAgent.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] CpuMetricsCreateRequest request)
-        {
-            _logger.LogInformation("Create cpu metrics.");
-            _cpuMetricsRepository.Create(_mapper.Map<CpuMetric>(request));             
-            return Ok();
-        }
-
-        
-
-        [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsCpuPersentiles([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] double percentile)
-        {
-            return Ok();
-        }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
         public ActionResult<IList<CpuMetricsDto>> GetMetricsCpu([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)

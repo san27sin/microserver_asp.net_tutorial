@@ -3,7 +3,8 @@ using Quartz.Spi;
 
 namespace MetricsAgent.Jobs
 {
-    public class SingletonJobFactory : IJobFactory
+    //будущий сервес нашего проекта
+    public class SingletonJobFactory : IJobFactory//пораждение класса job 
     { 
         private readonly IServiceProvider _serviceProvider; 
 
@@ -20,7 +21,7 @@ namespace MetricsAgent.Jobs
 
         public void ReturnJob(IJob job)
         {
-            throw new NotImplementedException();
+            //он и так job отдаст 
         }
     }
 }

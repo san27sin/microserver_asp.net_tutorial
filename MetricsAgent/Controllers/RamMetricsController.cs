@@ -23,13 +23,6 @@ namespace MetricsAgent.Controllers
             _mapper = mapper;   
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] RamMetricsCreateRequest request)
-        {
-            _logger.LogInformation("Create rammetrics");
-            _iRamMetricsRepository.Create(_mapper.Map<RamMetrics>(request));
-            return Ok();
-        }
 
 
         [HttpGet("available/from/{fromTime}/to/{toTime}")]
