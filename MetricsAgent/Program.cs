@@ -86,7 +86,6 @@ builder.Services.AddSingleton<IRamMetricsRepository, RamMetricsRepository>();
 //singletone - живет вечно
 //scope живет по времи обработки запроса
 #endregion
-//Sql.ConfigerSqlLiteConnection(); Теперь его заменяет мигратор 
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -108,10 +107,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-
-
-
-
+#region jobs_servers
 //на каждый job регестрировать сервес
 builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
@@ -126,8 +122,18 @@ builder.Services.AddSingleton(new JobSchedule(
     typeof(RamMetricsJob),
     "0/5 * * ? * * *"));
 
+builder.Services.AddSingleton<DotNetMetricsJob>();
+builder.Services.AddSingleton(new JobSchedule(
+    typeof(DotNetMetricsJob),
+    "0/5 * * ? * * *"));
+
+builder.Services.AddSingleton<HddMetricsJob>();
+builder.Services.AddSingleton(new JobSchedule(
+    typeof(HddMetricsJob),
+    "0/5 * * ? * * *"));
 
 builder.Services.AddHostedService<QuartzHostedService>();//этот сервес объединяет джоб
+#endregion
 
 var app = builder.Build();
 

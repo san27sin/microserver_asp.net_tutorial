@@ -13,13 +13,13 @@ namespace MetricsAgent.Controllers
     public class RamMetricsController : Controller
     {
         private readonly ILogger<RamMetricsController> _logger;
-        private readonly IRamMetricsRepository _iRamMetricsRepository;
+        private readonly IRamMetricsRepository _ramMetricsRepository;
         private readonly IMapper _mapper;
 
         public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository iRamMetricsRepository, IMapper mapper)
         {
             _logger = logger;
-            _iRamMetricsRepository = iRamMetricsRepository;
+            _ramMetricsRepository = iRamMetricsRepository;
             _mapper = mapper;   
         }
 
@@ -29,7 +29,15 @@ namespace MetricsAgent.Controllers
         public IActionResult GetMetricsRam([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation("Get all rammetrics.");
-            return Ok(_mapper.Map<List<RamMetricsDto>>(_iRamMetricsRepository.GetByTimePeriod(fromTime, toTime)));
+            return Ok(_mapper.Map<List<RamMetricsDto>>(_ramMetricsRepository.GetByTimePeriod(fromTime, toTime)));
+        }
+
+
+        [HttpGet("all")]
+        public ActionResult<IList<RamMetricsDto>> GetAllRamMetrics()
+        {
+            _logger.LogInformation("Get all hddmetrics.");
+            return Ok(_mapper.Map<List<RamMetricsDto>>(_ramMetricsRepository.GetAll()));
         }
     }
 }

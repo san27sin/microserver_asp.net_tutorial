@@ -32,5 +32,13 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation("Get all dotnetmetrics.");
             return Ok(_mapper.Map<List<DotNetMetricsDto>>(_dotNetMetricsRepository.GetByTimePeriod(fromTime, toTime)));
         }
+
+
+        [HttpGet("all")]
+        public ActionResult<IList<DotNetMetricsDto>> GetAllRamMetrics()
+        {
+            _logger.LogInformation("Get all dotnetmetrics.");
+            return Ok(_mapper.Map<List<DotNetMetricsDto>>(_dotNetMetricsRepository.GetAll()));
+        }
     }
 }

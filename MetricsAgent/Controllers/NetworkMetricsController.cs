@@ -30,5 +30,12 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation("Get all networkmetrics.");            
             return Ok(_mapper.Map<List<NetworkMetricsDto>>(_networkMetricRepository.GetByTimePeriod(fromTime, toTime)));
         }
+
+        [HttpGet("all")]
+        public ActionResult<IList<NetworkMetricsDto>> GetAllMetricsNetwork()
+        {
+            _logger.LogInformation("Get all hddmetrics.");
+            return Ok(_mapper.Map<List<NetworkMetricsDto>>(_networkMetricRepository.GetAll()));
+        }
     }
 }

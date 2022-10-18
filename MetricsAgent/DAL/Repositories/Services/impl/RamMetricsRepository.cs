@@ -40,7 +40,7 @@ namespace MetricsAgent.Services.impl
         public IList<RamMetrics> GetAll()
         {
             using var connection = new SQLiteConnection(_databaseOptions.Value.ConnectionString);
-            return connection.Query<RamMetrics>("SELECT * FROM * rammetrics").ToList();
+            return connection.Query<RamMetrics>("SELECT * FROM rammetrics").ToList();
         }
 
         public RamMetrics GetById(int id)

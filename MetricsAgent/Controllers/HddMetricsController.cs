@@ -31,5 +31,13 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation("Get all hddmetrics.");
             return Ok(_mapper.Map<List<HddMetricsDto>>(_hddMetricsRepository.GetByTimePeriod(fromTime, toTime)));
         }
+
+
+        [HttpGet("all")]
+        public ActionResult<IList<HddMetricsDto>> GetAllHddMetrics()
+        {
+            _logger.LogInformation("Get all hddmetrics.");
+            return Ok(_mapper.Map<List<HddMetricsDto>>(_hddMetricsRepository.GetAll()));
+        }
     }
 }
